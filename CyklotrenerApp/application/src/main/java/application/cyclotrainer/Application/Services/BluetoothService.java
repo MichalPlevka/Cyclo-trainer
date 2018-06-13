@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import application.cyclotrainer.Application.Activities.MainActivity;
 import application.cyclotrainer.Application.ApplicationManagement;
+import application.cyclotrainer.Application.Fragments.MeasurementsFragment;
 import application.cyclotrainer.Application.Fragments.OptionsFragment;
 import application.cyclotrainer.Application.Threads.ConnectThread;
 
@@ -347,7 +348,10 @@ public class BluetoothService extends Service {
             offset += 2; // UINT16 = 16 bits = 2 bytes
 
             calculateSpeed(lastWheelEventTime, cumulativeWheelRevolutions);
-            calculateGear();
+
+            if (ApplicationManagement.getInstance().getNativeSensorService().getSensorPressure() != null) {
+                calculateGear();
+            }
         }
 
         // we have to check the flags' 1st bit to see if C2 field exists
@@ -359,7 +363,10 @@ public class BluetoothService extends Service {
             offset += 2;
 
             calculateRPM(lastCrankEventTime, cumulativeCrankRevolutions);
-            calculateGear();
+
+            if (ApplicationManagement.getInstance().getNativeSensorService().getSensorPressure() != null) {
+                calculateGear();
+            }
         }
 
 

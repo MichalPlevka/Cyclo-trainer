@@ -70,14 +70,23 @@ public class NativeSensorService extends Service implements SensorEventListener 
 
         registerSensorListener();
 
+        sensorPressure = null;
+
         if (mainActivity != null) {
             if (sensorPressure == null) {
-                Toast.makeText(mainActivity, "BAROMETER NOT AVAILABLE", Toast.LENGTH_LONG).show();
+                Toast.makeText(mainActivity, "Barometer is not available in your device. Altitude and slope will be unavailable.", Toast.LENGTH_LONG).show();
+                MeasurementsFragment.getInstance().getAltitudeView().setText("N/A");
+                MeasurementsFragment.getInstance().getSlopeView().setText("N/A");
+                mainActivity.textViewChainring.setText("N/A");
+                mainActivity.gearTextView.setText("N/A");
+
+            } else {
+                setVariablesForFloatingAverageMeasurement(BUFFER_SIZE);
+                timerRunnable.run();
             }
         }
 
-        setVariablesForFloatingAverageMeasurement(BUFFER_SIZE);
-        timerRunnable.run();
+
     }
 
     private void registerSensorListener() {
@@ -111,22 +120,24 @@ public class NativeSensorService extends Service implements SensorEventListener 
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (mainActivity.fragmentManager != null && mainActivity.fragmentManager.findFragmentByTag("measurementsFragment") != null && MeasurementsFragment.getInstance().getAltitudeView() != null && sensorManager != null) {
-            float altitude = sensorManager.getAltitude(PRESSURE_STANDARD_ATMOSPHERE, event.values[0]);
+        if (sensorPressure != null) {
+            if (mainActivity.fragmentManager != null && mainActivity.fragmentManager.findFragmentByTag("measurementsFragment") != null && MeasurementsFragment.getInstance().getAltitudeView() != null && sensorManager != null) {
+                float altitude = sensorManager.getAltitude(PRESSURE_STANDARD_ATMOSPHERE, event.values[0]);
 
-            altitudeAveraged = addValueToFloatingAverageMeasurement(altitude);
+                altitudeAveraged = addValueToFloatingAverageMeasurement(altitude);
 
-            altitudeAveragedSmoothed = weightedSmoothing(altitudeAveraged, lastValueAltitude);
-            lastValueAltitude = altitudeAveraged;
+                altitudeAveragedSmoothed = weightedSmoothing(altitudeAveraged, lastValueAltitude);
+                lastValueAltitude = altitudeAveraged;
 
 
-            altitudeAveragedSmoothed = ((float)Math.round(altitudeAveragedSmoothed * 10) / 10);
-            MeasurementsFragment.getInstance().getAltitudeView().setText(altitudeAveragedSmoothed + " m a.s.l.");
+                altitudeAveragedSmoothed = ((float) Math.round(altitudeAveragedSmoothed * 10) / 10);
+                MeasurementsFragment.getInstance().getAltitudeView().setText(altitudeAveragedSmoothed + " m a.s.l.");
 
-            if (!startMeasuringSlope) {
-                lastDistanceTravelled = ApplicationManagement.getInstance().getMapService().getDistanceTravelled();
-                lastAltitudeAveragedSmoothed = altitudeAveragedSmoothed;
-                startMeasuringSlope = !startMeasuringSlope;
+                if (!startMeasuringSlope) {
+                    lastDistanceTravelled = ApplicationManagement.getInstance().getMapService().getDistanceTravelled();
+                    lastAltitudeAveragedSmoothed = altitudeAveragedSmoothed;
+                    startMeasuringSlope = !startMeasuringSlope;
+                }
             }
         }
     }

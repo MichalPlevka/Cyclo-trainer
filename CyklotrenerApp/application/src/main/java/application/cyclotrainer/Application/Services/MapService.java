@@ -43,6 +43,8 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
     public boolean setStartCamera = false;
     private float distanceTravelled;
 
+    private boolean moving = false;
+
     Polyline line;
     List<LatLng> locationPoints = new ArrayList<LatLng>();
 
@@ -125,46 +127,60 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
         Log.d("Connection failed", "ERROR: " + connectionResult);
     }
 
+
     @Override
     public void onLocationChanged(Location location) {
 
-        if (lastLocation != null && ApplicationManagement.getInstance().getBluetoothService().speed > 0) {
-            distanceTravelled += (location.distanceTo(lastLocation) / 1000); //distance between two points in km
+        if (lastLocation != null) {
+            if (location.distanceTo(lastLocation) > 15) {
+                moving = false;
+                Log.d("MOVING", "MOVING: FALSE  DISTANCE: " + location.distanceTo(lastLocation) + " ACCURACY: " + location.getAccuracy());
 
-            mainActivity.distanceValue.setText(((float) Math.round(distanceTravelled * 100) / 100) + " km");
+            } else {
+                distanceTravelled += (location.distanceTo(lastLocation) / 1000); //distance between two points in km
+
+                mainActivity.distanceValue.setText(((float) Math.round(distanceTravelled * 100) / 100) + " km");
+                moving = true;
+                Log.d("MOVING", "MOVING: TRUE  DISTANCE: " + location.distanceTo(lastLocation) + " ACCURACY: " + location.getAccuracy());
+            }
+
         }
 
         lastLocation = location;
 
-        if (MapFragment.getInstance() != null && MapFragment.getInstance().getGoogleMap() != null) {
+        if (moving) {
+            if (MapFragment.getInstance() != null && MapFragment.getInstance().getGoogleMap() != null) {
 
-            if (MapFragment.getInstance().getmCurrLocationMarker() != null) {
-                MapFragment.getInstance().getmCurrLocationMarker().remove();
-            }
+                if (MapFragment.getInstance().getmCurrLocationMarker() != null) {
+                    MapFragment.getInstance().getmCurrLocationMarker().remove();
+                }
 
-            //Place current location marker
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                //Place current location marker
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-            if (setStartCamera == false) {
-                MapFragment.getInstance().getGoogleMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-                setStartCamera = true;
-            }
+                if (setStartCamera == false) {
+                    MapFragment.getInstance().getGoogleMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+                    setStartCamera = true;
+                }
 
-            //move map camera
-            if (mapFragment.track == true) {
-                zoom = MapFragment.getInstance().getGoogleMap().getCameraPosition().zoom;
-                MapFragment.getInstance().getGoogleMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-            }
+                //move map camera
+                if (mapFragment.track == true) {
+                    zoom = MapFragment.getInstance().getGoogleMap().getCameraPosition().zoom;
+                    MapFragment.getInstance().getGoogleMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+                }
 
-            //paint track line
-            if (mapFragment.paint == true && ApplicationManagement.getInstance().getBluetoothService().speed > 0) {
-                line = MapFragment.getInstance().getGoogleMap().addPolyline(new PolylineOptions());
-                locationPoints.add(latLng);
-                line.setPoints(locationPoints);
-                line.setColor(Color.RED);
-                line.setWidth(17);
-            } else {
-                locationPoints.clear();
+                //paint track line
+                if (mapFragment.paint == true) {
+                    if (location.distanceTo(lastLocation) <= 15) {
+                        line = MapFragment.getInstance().getGoogleMap().addPolyline(new PolylineOptions());
+                        locationPoints.add(latLng);
+                        line.setPoints(locationPoints);
+                        line.setColor(Color.RED);
+                        line.setWidth(17);
+                    }
+                } else {
+                    locationPoints.clear();
+                }
             }
         }
 
