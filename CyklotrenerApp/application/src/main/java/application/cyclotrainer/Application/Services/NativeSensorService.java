@@ -70,8 +70,6 @@ public class NativeSensorService extends Service implements SensorEventListener 
 
         registerSensorListener();
 
-        sensorPressure = null;
-
         if (mainActivity != null) {
             if (sensorPressure == null) {
                 Toast.makeText(mainActivity, "Barometer is not available in your device. Altitude and slope will be unavailable.", Toast.LENGTH_LONG).show();

@@ -11,7 +11,7 @@ import application.cyclotrainer.Database.Entities.Data;
 import application.cyclotrainer.Database.Entities.LocationPoints;
 import application.cyclotrainer.Database.Entities.Workout;
 
-@Database(entities = {Data.class, Workout.class, LocationPoints.class}, version = 9)
+@Database(entities = {Data.class, Workout.class, LocationPoints.class}, version = 10)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract WorkoutDao workoutDao();
     public abstract DataDao dataDao();
