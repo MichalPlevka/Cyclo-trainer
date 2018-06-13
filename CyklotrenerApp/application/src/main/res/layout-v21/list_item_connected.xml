@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:context="application.cyclotrainer.Application.Activities.MainActivity">
+
+    <HorizontalScrollView
+        android:layout_width="300dp"
+        android:layout_height="40dp">
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/deviceItem"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingLeft="5dp"
+            android:text="NO DEVICE"
+            android:textSize="18sp" />
+    </HorizontalScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.Material.Light.ProgressBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:indeterminate="true"
+        android:visibility="visible" />
+
+</LinearLayout>
