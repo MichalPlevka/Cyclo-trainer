@@ -54,9 +54,8 @@ public class ApplicationManagement {
         }
     }
 
-    public void setDatabase() {
-        this.db = Room.databaseBuilder(mainActivity.getApplicationContext(), AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
-
+    public void setDatabase(MainActivity ma) {
+        this.db = Room.databaseBuilder(ma.getApplicationContext(), AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
     }
 
     public BluetoothService getBluetoothService() {
@@ -93,7 +92,9 @@ public class ApplicationManagement {
         setNativeSensorService();
         setBluetoothService();
         setMapService();
-        setDatabase();
+
+
+
     }
 
     public MapFragment getMapFragment() {

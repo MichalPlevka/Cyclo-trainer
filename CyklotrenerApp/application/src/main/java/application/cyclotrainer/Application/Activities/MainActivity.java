@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.google.android.gms.location.LocationServices;
 
 import application.cyclotrainer.Application.ApplicationManagement;
+import application.cyclotrainer.Application.DatabaseSettingsOperations;
 import application.cyclotrainer.Application.Services.BluetoothService;
 import application.cyclotrainer.Application.Services.MapService;
 import application.cyclotrainer.Application.Services.NativeSensorService;
@@ -76,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.context = this.getApplicationContext();
         this.appView = findViewById(R.id.mainLayout);
         this.fragmentManager = getSupportFragmentManager();
+
+        ApplicationManagement.getInstance().setDatabase(this);
+        DatabaseSettingsOperations.getInstance(); //create instance before createFragments
 
         createFragments();
 

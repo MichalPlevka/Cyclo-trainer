@@ -26,6 +26,7 @@ import java.util.List;
 import application.cyclotrainer.Application.Activities.MainActivity;
 import application.cyclotrainer.Application.ApplicationManagement;
 import application.cyclotrainer.Application.Fragments.MapFragment;
+import application.cyclotrainer.Application.Fragments.MeasurementsFragment;
 
 public class MapService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -38,6 +39,7 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
     public LocationRequest locationRequest;
 
     private Location lastLocation;
+    public double altitudeFromGPS;
 
     public float zoom = 18;
     public boolean setStartCamera = false;
@@ -112,6 +114,7 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
@@ -131,17 +134,21 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
     @Override
     public void onLocationChanged(Location location) {
 
+        if (ApplicationManagement.getInstance().getNativeSensorService().getSensorPressure() == null) {
+            altitudeFromGPS = location.getAltitude();
+            ApplicationManagement.getInstance().getNativeSensorService().setAndFilterAltitudeForMeasurements( (float) altitudeFromGPS);
+            Log.d("B", "ALTITUDE:  " + altitudeFromGPS);
+        }
+
         if (lastLocation != null) {
             if (location.distanceTo(lastLocation) > 15) {
                 moving = false;
-                Log.d("MOVING", "MOVING: FALSE  DISTANCE: " + location.distanceTo(lastLocation) + " ACCURACY: " + location.getAccuracy());
 
             } else {
                 distanceTravelled += (location.distanceTo(lastLocation) / 1000); //distance between two points in km
 
                 mainActivity.distanceValue.setText(((float) Math.round(distanceTravelled * 100) / 100) + " km");
                 moving = true;
-                Log.d("MOVING", "MOVING: TRUE  DISTANCE: " + location.distanceTo(lastLocation) + " ACCURACY: " + location.getAccuracy());
             }
 
         }

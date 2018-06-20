@@ -49,7 +49,8 @@ public class NativeSensorService extends Service implements SensorEventListener 
     float smoothingFactor = 0.01f;  //=1.0f nič nežehlíme //= 0.5f a.priemer posebeidúcich //= 0.1f vysoké žehlenie
 
 
-    private static final int BUFFER_SIZE = 100;
+    private static final int BUFFER_SIZE_GPS = 1;
+    private static final int BUFFER_SIZE_BAROMETER = 100;
 
     public NativeSensorService() {
 
@@ -70,16 +71,15 @@ public class NativeSensorService extends Service implements SensorEventListener 
 
         registerSensorListener();
 
+
         if (mainActivity != null) {
             if (sensorPressure == null) {
-                Toast.makeText(mainActivity, "Barometer is not available in your device. Altitude and slope will be unavailable.", Toast.LENGTH_LONG).show();
-                MeasurementsFragment.getInstance().getAltitudeView().setText("N/A");
-                MeasurementsFragment.getInstance().getSlopeView().setText("N/A");
-                mainActivity.textViewChainring.setText("N/A");
-                mainActivity.gearTextView.setText("N/A");
+                setVariablesForFloatingAverageMeasurement(BUFFER_SIZE_GPS);
+                timerRunnable.run();
+                Toast.makeText(mainActivity, "Barometer is not available in your device. Altitude and slope measurements are going to be inaccurate.", Toast.LENGTH_LONG).show();
 
             } else {
-                setVariablesForFloatingAverageMeasurement(BUFFER_SIZE);
+                setVariablesForFloatingAverageMeasurement(BUFFER_SIZE_BAROMETER);
                 timerRunnable.run();
             }
         }
@@ -120,27 +120,35 @@ public class NativeSensorService extends Service implements SensorEventListener 
     public void onSensorChanged(SensorEvent event) {
         if (sensorPressure != null) {
             if (mainActivity.fragmentManager != null && mainActivity.fragmentManager.findFragmentByTag("measurementsFragment") != null && MeasurementsFragment.getInstance().getAltitudeView() != null && sensorManager != null) {
-                float altitude = sensorManager.getAltitude(PRESSURE_STANDARD_ATMOSPHERE, event.values[0]);
 
-                altitudeAveraged = addValueToFloatingAverageMeasurement(altitude);
+                float altitude = -999999;
 
-                altitudeAveragedSmoothed = weightedSmoothing(altitudeAveraged, lastValueAltitude);
-                lastValueAltitude = altitudeAveraged;
-
-
-                altitudeAveragedSmoothed = ((float) Math.round(altitudeAveragedSmoothed * 10) / 10);
-                MeasurementsFragment.getInstance().getAltitudeView().setText(altitudeAveragedSmoothed + " m a.s.l.");
-
-                if (!startMeasuringSlope) {
-                    lastDistanceTravelled = ApplicationManagement.getInstance().getMapService().getDistanceTravelled();
-                    lastAltitudeAveragedSmoothed = altitudeAveragedSmoothed;
-                    startMeasuringSlope = !startMeasuringSlope;
+                if (sensorPressure != null) {
+                    altitude = sensorManager.getAltitude(PRESSURE_STANDARD_ATMOSPHERE, event.values[0]);
+                    setAndFilterAltitudeForMeasurements(altitude);
                 }
+
             }
         }
     }
 
-    //runs without a timer by reposting this handler at the end of the runnable
+    public void setAndFilterAltitudeForMeasurements(float altitude) {
+        altitudeAveraged = addValueToFloatingAverageMeasurement(altitude);
+
+        altitudeAveragedSmoothed = weightedSmoothing(altitudeAveraged, lastValueAltitude);
+        lastValueAltitude = altitudeAveraged;
+
+        altitudeAveragedSmoothed = ((float) Math.round(altitudeAveragedSmoothed * 10) / 10);
+        MeasurementsFragment.getInstance().getAltitudeView().setText(altitudeAveragedSmoothed + " m a.s.l.");
+
+        if (!startMeasuringSlope) {
+            lastDistanceTravelled = ApplicationManagement.getInstance().getMapService().getDistanceTravelled();
+            lastAltitudeAveragedSmoothed = altitudeAveragedSmoothed;
+            startMeasuringSlope = !startMeasuringSlope;
+        }
+    }
+
+    //timer for measuring slope
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 

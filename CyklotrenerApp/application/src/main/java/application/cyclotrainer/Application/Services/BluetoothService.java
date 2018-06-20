@@ -77,6 +77,8 @@ public class BluetoothService extends Service {
     public boolean getFirstTimeDataSpeed = true;
     public double speed = 0;
 
+    public boolean moving = false;
+
     private BluetoothGatt bluetoothGatt;
     private BluetoothAdapter bluetoothAdapter;
 
@@ -116,6 +118,8 @@ public class BluetoothService extends Service {
         if (mainActivity != null) {
             mainActivity.registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
         }
+
+        timerRunnable.run();
     }
 
     /**
@@ -369,9 +373,6 @@ public class BluetoothService extends Service {
             }
         }
 
-
-
-
     }
 
     private void calculateRPM(int lastCrankEventTime, int cumulativeCrankRevolutions) {
@@ -393,6 +394,7 @@ public class BluetoothService extends Service {
 
                     if (rpm < 300) {
                         mainActivity.rpmValue.setText("" + String.format("%.0f", rpm));
+                        moving = true;
                     }
                 }
             }
@@ -420,12 +422,32 @@ public class BluetoothService extends Service {
                     speed = Math.round(speed*3600);
                     if (speed < 60) {
                         mainActivity.speedValue.setText("" + String.format("%.0f", speed) + " km/h");
+                        moving = true;
                     }
 
                 }
             }
         }
     }
+
+    //if cadence/speed sensor is not active for 3 seconds it means that cyclist is not moving
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            if (mainActivity != null) {
+                if (!moving) {
+                    mainActivity.speedValue.setText("0 km/h");
+                    mainActivity.rpmValue.setText("0");
+                }
+
+                moving = false;
+            }
+
+            timerHandler.postDelayed(this, 4000);
+        }
+    };
 
     private void calculateGear(){
         if ((rpm > 20 && rpm <= 220) && speed > 0) {

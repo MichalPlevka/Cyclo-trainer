@@ -4,7 +4,6 @@ package application.cyclotrainer.Application.Threads;
 import android.util.Log;
 
 import java.sql.Date;
-import java.util.List;
 
 import application.cyclotrainer.Application.Activities.MainActivity;
 import application.cyclotrainer.Application.ApplicationManagement;
@@ -13,7 +12,7 @@ import application.cyclotrainer.Application.Services.MapService;
 import application.cyclotrainer.Application.Services.NativeSensorService;
 import application.cyclotrainer.Database.AppDatabase.AppDatabase;
 import application.cyclotrainer.Database.Entities.Data;
-import application.cyclotrainer.Database.Entities.LocationPoints;
+import application.cyclotrainer.Database.Entities.LocationPoint;
 import application.cyclotrainer.Database.Entities.Workout;
 
 public class DatabaseThread extends Thread {
@@ -66,11 +65,11 @@ public class DatabaseThread extends Thread {
                     appDatabase.dataDao().insertData(data);
 
                     //Insert workout_id, latitude and longitude
-                    LocationPoints locationPoints = new LocationPoints();
-                    locationPoints.setWorkoutId(appDatabase.workoutDao().getLastWorkoutId().getId());
-                    locationPoints.setLatitude(mapService.getLastLocation().getLatitude());
-                    locationPoints.setLongitude(mapService.getLastLocation().getLongitude());
-                    appDatabase.locationPointsDao().insertLocationPoints(locationPoints);
+                    LocationPoint locationPoint = new LocationPoint();
+                    locationPoint.setWorkoutId(appDatabase.workoutDao().getLastWorkoutId().getId());
+                    locationPoint.setLatitude(mapService.getLastLocation().getLatitude());
+                    locationPoint.setLongitude(mapService.getLastLocation().getLongitude());
+                    appDatabase.locationPointsDao().insertLocationPoints(locationPoint);
 
                     //Update distanceTravelled
                     currentWorkout.setDistanceTravelled(mapService.getDistanceTravelled());

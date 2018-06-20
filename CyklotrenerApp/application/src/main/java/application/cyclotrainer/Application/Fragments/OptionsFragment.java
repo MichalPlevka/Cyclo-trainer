@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import application.cyclotrainer.Application.ApplicationManagement;
+import application.cyclotrainer.Application.DatabaseSettingsOperations;
+import application.cyclotrainer.Application.Threads.DatabaseSettingsOperationsThread;
 import application.cyclotrainer.R;
 
 /**
@@ -103,29 +105,20 @@ public class OptionsFragment extends Fragment implements View.OnClickListener {
         this.buttonZoneTwo = fragmentView.findViewById(R.id.buttonZoneTwo);
         this.buttonZoneThree = fragmentView.findViewById(R.id.buttonZoneThree);
         this.buttonZoneFour = fragmentView.findViewById(R.id.buttonZoneFour);
-
         buttonZoneOne.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        this.maximumHeartRate = 202 - (0.55 * ageValue);
+
+
+        ageValue = 23;
+        gender = "MALE";
+        wheelDiameterValue = 622;
 
         ageEdit.setText(String.valueOf(ageValue));
         wheelDiameterEdit.setText(String.valueOf(wheelDiameterValue));
         cogsEdit.setText("11 12 13 14 15 16 17 18 19 20 21 22 23");
         chainringsEdit.setText("34 50");
 
-        String[] cogsList = cogsEdit.getText().toString().split(" ");
-        cogsListValues = new ArrayList<Integer>();
-        for (String cogVal : cogsList) {
-            cogsListValues.add(Integer.parseInt(cogVal));
-        }
-
-        String[] chainringsList = chainringsEdit.getText().toString().split(" ");
-        chainringsListValues = new ArrayList<Integer>();
-        for (String chainVal : chainringsList) {
-            chainringsListValues.add(Integer.parseInt(chainVal));
-        }
-
-        calculateUserGears();
-
+        DatabaseSettingsOperationsThread databaseSettingsOperationsThread = new DatabaseSettingsOperationsThread(0);
+        databaseSettingsOperationsThread.start();
 
         this.applyButton = (Button) fragmentView.findViewById(R.id.applyButton);
         applyButton.setOnClickListener(this);
@@ -205,6 +198,34 @@ public class OptionsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    public void setSettingsAndCalculateGears() {
+        ageValue = Integer.parseInt(DatabaseSettingsOperations.getInstance().age);
+        gender = DatabaseSettingsOperations.getInstance().gender;
+        wheelDiameterValue = Integer.parseInt(DatabaseSettingsOperations.getInstance().wheelDiameter);
+
+        toggleButtonGender.setText(gender);
+        ageEdit.setText(String.valueOf(ageValue));
+        wheelDiameterEdit.setText(String.valueOf(wheelDiameterValue));
+        cogsEdit.setText(DatabaseSettingsOperations.getInstance().cogs);
+        chainringsEdit.setText(DatabaseSettingsOperations.getInstance().chainrings);
+
+
+        this.maximumHeartRate = 202 - (0.55 * ageValue);
+
+        String[] cogsList = cogsEdit.getText().toString().split(" ");
+        cogsListValues = new ArrayList<Integer>();
+        for (String cogVal : cogsList) {
+            cogsListValues.add(Integer.parseInt(cogVal));
+        }
+
+        String[] chainringsList = chainringsEdit.getText().toString().split(" ");
+        chainringsListValues = new ArrayList<Integer>();
+        for (String chainVal : chainringsList) {
+            chainringsListValues.add(Integer.parseInt(chainVal));
+        }
+
+        calculateUserGears();
+    }
 
     public void saveUserDefinedValues() {
         gender = toggleButtonGender.getText().toString();
@@ -275,6 +296,10 @@ public class OptionsFragment extends Fragment implements View.OnClickListener {
             if (ageCorrect && wheelDiameterCorrect && cogsCorrect && chainringsCorrect) {
                 calculateUserGears();
                 Toast.makeText(ApplicationManagement.getInstance().getMainActivity(), "Changes were saved!", Toast.LENGTH_LONG).show();
+
+                DatabaseSettingsOperationsThread databaseSettingsOperationsThread = new DatabaseSettingsOperationsThread(2);
+                databaseSettingsOperationsThread.start();
+
 
             } else {
                 Toast.makeText(ApplicationManagement.getInstance().getMainActivity(), "All fields are required and correct values have to be entered. Please use a predefined format of field values.", Toast.LENGTH_LONG).show();
@@ -401,5 +426,29 @@ public class OptionsFragment extends Fragment implements View.OnClickListener {
 
     public void setChainringsListValues(List<Integer> chainringsListValues) {
         this.chainringsListValues = chainringsListValues;
+    }
+
+    public EditText getAgeEdit() {
+        return ageEdit;
+    }
+
+    public void setAgeEdit(EditText ageEdit) {
+        this.ageEdit = ageEdit;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public ToggleButton getToggleButtonGender() {
+        return toggleButtonGender;
+    }
+
+    public void setToggleButtonGender(ToggleButton toggleButtonGender) {
+        this.toggleButtonGender = toggleButtonGender;
     }
 }
