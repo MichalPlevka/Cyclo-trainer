@@ -26,7 +26,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -68,7 +68,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -111,7 +111,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -146,7 +146,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -179,7 +179,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -212,7 +212,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -241,9 +241,9 @@
                         android:id="@+id/buttonZoneOne"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:layout_marginLeft="1dp"
                         android:layout_marginRight="2dp"
+                        android:layout_weight="1"
                         android:background="#6666ff"
                         android:text="ENDURANCE"
                         android:textSize="11sp"
@@ -253,8 +253,8 @@
                         android:id="@+id/buttonZoneTwo"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:layout_marginRight="1dp"
+                        android:layout_weight="1"
                         android:background="#40bf80"
                         android:text="STAMINA"
                         android:textSize="11sp"
@@ -264,8 +264,8 @@
                         android:id="@+id/buttonZoneThree"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:layout_marginLeft="1dp"
+                        android:layout_weight="1"
                         android:background="#e6e600"
                         android:text="ECONOMY"
                         android:textSize="11sp"
@@ -275,9 +275,9 @@
                         android:id="@+id/buttonZoneFour"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginRight="1dp"
                         android:layout_marginLeft="2dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_weight="1"
                         android:background="#ff6600"
                         android:text="SPEED"
                         android:textSize="11sp"

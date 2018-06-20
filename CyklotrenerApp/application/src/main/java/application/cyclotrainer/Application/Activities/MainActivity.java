@@ -222,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intentNativeSensorService = new Intent(this, NativeSensorService.class);
         ApplicationManagement.getInstance().getBluetoothService().stopService(intentNativeSensorService);
+
+        Intent intentMapService = new Intent(this, MapService.class);
+        ApplicationManagement.getInstance().getBluetoothService().stopService(intentMapService);
     }
 
 
