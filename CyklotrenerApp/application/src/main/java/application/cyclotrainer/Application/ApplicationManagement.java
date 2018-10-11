@@ -93,8 +93,6 @@ public class ApplicationManagement {
         setBluetoothService();
         setMapService();
 
-
-
     }
 
     public MapFragment getMapFragment() {

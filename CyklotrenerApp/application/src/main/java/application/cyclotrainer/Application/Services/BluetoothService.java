@@ -44,7 +44,6 @@ public class BluetoothService extends Service {
 
     public MainActivity mainActivity;
 
-    private BluetoothService bluetoothService;
     private BluetoothManager bluetoothManager;
     private Set<BluetoothDevice> connectedDevices = new HashSet<BluetoothDevice>();
     private ListView connectedListView, foundListView;
@@ -122,11 +121,6 @@ public class BluetoothService extends Service {
         timerRunnable.run();
     }
 
-    /**
-     * Initializes a reference to the local Bluetooth adapter.
-     *
-     * @return Return true if the initialization is successful.
-     */
     public boolean setBluetoothAdapter() {
         // For API level 18 and above, get a reference to BluetoothAdapter through
         // BluetoothManager.
@@ -165,9 +159,7 @@ public class BluetoothService extends Service {
     }
 
 
-    // * ak pride intent s BluetoothDevice.ACTION_FOUND, prida device do zoznamu
-    // * foundAdapter
-    // */
+    // When an intent arrives with BluetoothDevice.ACTION_FOUND, add the device to foundAdapter
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -430,7 +422,7 @@ public class BluetoothService extends Service {
         }
     }
 
-    //if cadence/speed sensor is not active for 3 seconds it means that cyclist is not moving
+    // If cadence/speed sensor is not active for 3 seconds it means that cyclist is not moving
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 

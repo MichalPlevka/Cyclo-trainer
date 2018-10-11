@@ -18,7 +18,6 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
-
     public void onSwipeLeft() {
     }
 

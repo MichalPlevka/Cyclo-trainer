@@ -93,20 +93,6 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
     }
 
 
-
-//    @Override
-//    public void onProviderDisabled(String provider) {
-//    }
-//
-//    @Override
-//    public void onProviderEnabled(String provider) {
-//    }
-//
-//    @Override
-//    public void onStatusChanged(String provider, int status, Bundle extras) {
-//    }
-
-
     @Override
     public void onConnected(Bundle bundle) {
         Log.d("LOCATION", "CONNECTED");
@@ -137,7 +123,6 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
         if (ApplicationManagement.getInstance().getNativeSensorService().getSensorPressure() == null) {
             altitudeFromGPS = location.getAltitude();
             ApplicationManagement.getInstance().getNativeSensorService().setAndFilterAltitudeForMeasurements( (float) altitudeFromGPS);
-            Log.d("B", "ALTITUDE:  " + altitudeFromGPS);
         }
 
         if (lastLocation != null) {
@@ -162,7 +147,7 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
                     MapFragment.getInstance().getmCurrLocationMarker().remove();
                 }
 
-                //Place current location marker
+                // Place current location marker
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
                 if (setStartCamera == false) {
@@ -170,13 +155,13 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
                     setStartCamera = true;
                 }
 
-                //move map camera
+                // Move map camera
                 if (mapFragment.track == true) {
                     zoom = MapFragment.getInstance().getGoogleMap().getCameraPosition().zoom;
                     MapFragment.getInstance().getGoogleMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
                 }
 
-                //paint track line
+                // Paint track line
                 if (mapFragment.paint == true) {
                     if (location.distanceTo(lastLocation) <= 15) {
                         line = MapFragment.getInstance().getGoogleMap().addPolyline(new PolylineOptions());
@@ -210,7 +195,6 @@ public class MapService extends Service implements GoogleApiClient.ConnectionCal
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         return null;
     }
 

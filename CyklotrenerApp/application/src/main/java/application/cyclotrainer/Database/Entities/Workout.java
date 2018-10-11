@@ -13,7 +13,6 @@ import application.cyclotrainer.Database.Converters.Converters;
 @Entity
 public class Workout {
 
-
     public int getId() {
         return id;
     }

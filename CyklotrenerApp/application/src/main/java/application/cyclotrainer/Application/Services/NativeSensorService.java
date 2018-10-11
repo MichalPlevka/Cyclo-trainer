@@ -148,7 +148,7 @@ public class NativeSensorService extends Service implements SensorEventListener 
         }
     }
 
-    //timer for measuring slope
+    // Timer for measuring slope
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 

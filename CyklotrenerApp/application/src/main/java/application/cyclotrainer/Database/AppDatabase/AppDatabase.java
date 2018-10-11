@@ -1,6 +1,5 @@
 package application.cyclotrainer.Database.AppDatabase;
 
-
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
